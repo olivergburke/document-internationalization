@@ -14,7 +14,7 @@ import {useCallback} from 'react'
 import {SanityDocument, useClient} from 'sanity'
 
 import {API_VERSION, METADATA_SCHEMA_NAME} from '../constants'
-import {useOpenInNewPane} from '../hooks/useOpenInNewPane'
+import {useOpenInCurrentPane} from '../hooks/useOpenInCurrentPane'
 import {Language, Metadata, TranslationReference} from '../types'
 import {createReference} from '../utils/createReference'
 import {useDocumentInternationalizationContext} from './DocumentInternationalizationContext'
@@ -53,7 +53,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
   const client = useClient({apiVersion})
   const toast = useToast()
 
-  const open = useOpenInNewPane(translation?.value?._ref, schemaType)
+  const open = useOpenInCurrentPane(translation?.value?._ref, schemaType)
   const handleOpen = useCallback(() => open(), [open])
 
   const handleCreate = useCallback(async () => {
