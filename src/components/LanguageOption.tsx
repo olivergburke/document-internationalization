@@ -13,7 +13,7 @@ import {uuid} from '@sanity/uuid'
 import {useCallback, useEffect, useState} from 'react'
 import {type ObjectSchemaType, type SanityDocument, useClient} from 'sanity'
 
-import { METADATA_SCHEMA_NAME} from '../constants'
+import {METADATA_SCHEMA_NAME} from '../constants'
 import {useOpenInCurrentPane} from '../hooks/useOpenInCurrentPane'
 import type {
   Language,
@@ -69,7 +69,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
   const client = useClient({apiVersion})
   const toast = useToast()
 
-  const open = useOpenInCurrentPane(translation?.value?._ref, schemaType)
+  const open = useOpenInCurrentPane(translation?.value?._ref, schemaType.name)
   const handleOpen = useCallback(() => open(), [open])
 
   /* Once a translation has been created, reset the userHasClicked state to false
