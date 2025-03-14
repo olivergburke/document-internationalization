@@ -21,7 +21,6 @@ import type {
   MetadataDocument,
   TranslationReference,
 } from '../types'
-
 import {createReference} from '../utils/createReference'
 import {removeExcludedPaths} from '../utils/excludePaths'
 import {useDocumentInternationalizationContext} from './DocumentInternationalizationContext'
