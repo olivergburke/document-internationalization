@@ -10,18 +10,25 @@ import {
   useToast,
 } from '@sanity/ui'
 import {uuid} from '@sanity/uuid'
-import {useCallback} from 'react'
-import {SanityDocument, useClient} from 'sanity'
+import {useCallback, useEffect, useState} from 'react'
+import {type ObjectSchemaType, type SanityDocument, useClient} from 'sanity'
 
-import {API_VERSION, METADATA_SCHEMA_NAME} from '../constants'
+import { METADATA_SCHEMA_NAME} from '../constants'
 import {useOpenInCurrentPane} from '../hooks/useOpenInCurrentPane'
-import {Language, Metadata, TranslationReference} from '../types'
+import type {
+  Language,
+  Metadata,
+  MetadataDocument,
+  TranslationReference,
+} from '../types'
+
 import {createReference} from '../utils/createReference'
+import {removeExcludedPaths} from '../utils/excludePaths'
 import {useDocumentInternationalizationContext} from './DocumentInternationalizationContext'
 
 type LanguageOptionProps = {
   language: Language
-  schemaType: string
+  schemaType: ObjectSchemaType
   documentId: string
   disabled: boolean
   current: boolean
@@ -42,19 +49,36 @@ export default function LanguageOption(props: LanguageOptionProps) {
     metadata,
     metadataId,
   } = props
+  /* When the user has clicked the Create button, the button should be disabled
+   * to prevent double-clicks from firing onCreate twice. This creates duplicate
+   * translation metadata entries, which editors will not be able to delete */
+  const [userHasClicked, setUserHasClicked] = useState(false)
   const disabled =
-    props.disabled || current || !source || !sourceLanguageId || !metadataId
+    props.disabled ||
+    userHasClicked ||
+    current ||
+    !source ||
+    !sourceLanguageId ||
+    !metadataId
   const translation: TranslationReference | undefined = metadata?.translations
     .length
     ? metadata.translations.find((t) => t._key === language.id)
     : undefined
-  const {apiVersion, languageField, weakReferences} =
+  const {apiVersion, languageField, weakReferences, callback} =
     useDocumentInternationalizationContext()
   const client = useClient({apiVersion})
   const toast = useToast()
 
   const open = useOpenInCurrentPane(translation?.value?._ref, schemaType)
   const handleOpen = useCallback(() => open(), [open])
+
+  /* Once a translation has been created, reset the userHasClicked state to false
+   * so they can click on it to navigate to the translation. If a translation already
+   * existed when this component was mounted, this will have no effect. */
+  const hasTranslation = Boolean(translation)
+  useEffect(() => {
+    setUserHasClicked(false)
+  }, [hasTranslation])
 
   const handleCreate = useCallback(async () => {
     if (!source) {
@@ -68,17 +92,25 @@ export default function LanguageOption(props: LanguageOptionProps) {
     if (!metadataId) {
       throw new Error(`Cannot create translation without a metadata ID`)
     }
+    /* Disable the create button while this request is pending */
+    setUserHasClicked(true)
 
     const transaction = client.transaction()
 
     // 1. Duplicate source document
     const newTranslationDocumentId = uuid()
-    const newTranslationDocument = {
+    let newTranslationDocument = {
       ...source,
       _id: `drafts.${newTranslationDocumentId}`,
       // 2. Update language of the translation
       [languageField]: language.id,
     }
+
+    // Remove fields / paths we don't want to duplicate
+    newTranslationDocument = removeExcludedPaths(
+      newTranslationDocument,
+      schemaType
+    ) as SanityDocument
 
     transaction.create(newTranslationDocument)
 
@@ -86,19 +118,19 @@ export default function LanguageOption(props: LanguageOptionProps) {
     const sourceReference = createReference(
       sourceLanguageId,
       documentId,
-      schemaType,
+      schemaType.name,
       !weakReferences
     )
     const newTranslationReference = createReference(
       language.id,
       newTranslationDocumentId,
-      schemaType,
+      schemaType.name,
       !weakReferences
     )
-    const newMetadataDocument = {
+    const newMetadataDocument: MetadataDocument = {
       _id: metadataId,
       _type: METADATA_SCHEMA_NAME,
-      schemaTypes: [schemaType],
+      schemaTypes: [schemaType.name],
       translations: [sourceReference],
     }
 
@@ -120,6 +152,21 @@ export default function LanguageOption(props: LanguageOptionProps) {
       .then(() => {
         const metadataExisted = Boolean(metadata?._createdAt)
 
+        callback?.({
+          client,
+          sourceLanguageId,
+          sourceDocument: source,
+          newDocument: newTranslationDocument,
+          destinationLanguageId: language.id,
+          metaDocumentId: metadataId,
+        }).catch((err) => {
+          toast.push({
+            status: 'error',
+            title: `Callback`,
+            description: `Error while running callback - ${err}.`,
+          })
+        })
+
         return toast.push({
           status: 'success',
           title: `Created "${language.title}" translation`,
@@ -130,6 +177,9 @@ export default function LanguageOption(props: LanguageOptionProps) {
       })
       .catch((err) => {
         console.error(err)
+
+        /* Re-enable the create button if there was an error */
+        setUserHasClicked(false)
 
         return toast.push({
           status: 'error',
@@ -149,6 +199,8 @@ export default function LanguageOption(props: LanguageOptionProps) {
     source,
     sourceLanguageId,
     toast,
+    weakReferences,
+    callback,
   ])
 
   let message
@@ -163,6 +215,7 @@ export default function LanguageOption(props: LanguageOptionProps) {
 
   return (
     <Tooltip
+      animate
       content={
         <Box padding={2}>
           <Text muted size={1}>

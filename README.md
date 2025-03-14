@@ -11,6 +11,7 @@ All new rewrite exclusively for Sanity Studio v3
     - [Basic configuration](#basic-configuration)
     - [Advanced configuration](#advanced-configuration)
     - [Language field](#language-field)
+    - [Excluding fields](#excluding-fields)
   - [Querying translations](#querying-translations)
     - [Querying with GROQ](#querying-with-groq)
     - [Querying with GraphQL](#querying-with-graphql)
@@ -75,10 +76,10 @@ The only required configuration is:
 ```ts
 // sanity.config.ts
 
-import {createConfig} from 'sanity'
+import {defineConfig} from 'sanity'
 import {documentInternationalization} from '@sanity/document-internationalization'
 
-export const createConfig({
+export const defineConfig({
   // ... all other config
   plugins: [
     // ... all other plugins
@@ -101,10 +102,10 @@ The plugin also supports asynchronously retrieving languages from the dataset, m
 ```ts
 // sanity.config.ts
 
-import {createConfig} from 'sanity'
+import {defineConfig} from 'sanity'
 import {documentInternationalization} from '@sanity/document-internationalization'
 
-export const createConfig({
+export const defineConfig({
   // ... all other config
   plugins: [
     // ... all other plugins
@@ -118,6 +119,7 @@ export const createConfig({
       ],
       // ...or a function that takes the client and returns a promise of an array of supported languages
       // MUST return an "id" and "title" as strings
+      // Note: Async language configuration cannot create templates for new documents
       // supportedLanguages: (client) => client.fetch(`*[_type == "language"]{id, title}`),
 
       // Required
@@ -126,27 +128,46 @@ export const createConfig({
 
       // Optional
       // Customizes the name of the language field
-      languageField: `language` // defauts to "language"
+      languageField: `language`, // defauts to "language"
 
       // Optional
       // Keep translation.metadata references weak
-      weakReferences: true // defaults to false
+      weakReferences: true, // defaults to false
 
       // Optional
       // Adds UI for publishing all translations at once. Requires access to the Scheduling API
       // https://www.sanity.io/docs/scheduling-api
-      bulkPublish: true // defaults to false
+      bulkPublish: true, // defaults to false
 
       // Optional
       // Adds additional fields to the metadata document
       metadataFields: [
-        defineField({ name: 'slug', type: 'slug' })
+        defineField({ name: 'slug', type: 'slug' }),
       ],
 
       // Optional
       // Define API Version for all queries
       // https://www.sanity.io/docs/api-versioning
-      apiVersion: '2023-05-22'
+      apiVersion: '2023-05-22',
+
+      // Optional
+      // Enable "manage translations" button without creating a translated version. Helpful if you have
+      // pre-existing documents that you need to tie together through the metadata document
+      allowCreateMetaDoc: true, // defaults to false
+
+      // Optional
+      // Callback function that runs after a translation document has been created
+      // Note: Defaults to null
+      callback: ({
+        sourceDocument, // The document in the original language
+        newDocument, // The newly created translation of the source document
+        sourceLanguageId, // The id of the original language
+        destinationLanguageId, // The id of the destination language
+        metaDocumentId, // The id of the meta document referencing the document translations
+        client // Sanity client
+      }) {
+        // Your function implementation
+      }
     })
   ]
 })
@@ -167,6 +188,23 @@ defineField({
   readOnly: true,
   hidden: true,
 })
+```
+
+### Excluding fields
+
+The default behaviour of this plugin when creating a new translation is to duplicate the originating document, which is useful for then translating the fields directly in the new document - perhaps with [Sanity AI Assist](https://github.com/sanity-io/assist). However, sometimes you may want to exclude certain fields from being copied to the new document. You can do this by updating your schema to exclude certain types or fields with `options.documentInternationalization.exclude`:
+
+```ts
+defineField({
+  name: 'title',
+  title: 'Title',
+  type: 'string',
+  options: {
+    documentInternationalization: {
+      exclude: true,
+    },
+  },
+}),
 ```
 
 ## Querying translations
@@ -244,7 +282,7 @@ For more advanced topics see the documentation. For installation see [Usage](#us
 - [Importing and creating documents](./docs/02-importing-and-creating-documents.md)
 - [Deleting translated documents](./docs/03-deleting-translated-documents.md)
 - [Importing plugin components](./docs/04-importing-plugin-components.md)
-- [Allowing the same slug on different language versions](./docs/05-allowing-the-same-slug-on-different-language-versions.md)
+- [Allowing the same slug on different language versions](./docs/05-allowing-the-same-slug-for-translations.md)
 - [Remove default new document template](./docs/06-remove-default-new-document-template.md)
 
 ## License

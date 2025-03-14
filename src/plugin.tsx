@@ -9,8 +9,9 @@ import {DocumentInternationalizationProvider} from './components/DocumentInterna
 import {DocumentInternationalizationMenu} from './components/DocumentInternationalizationMenu'
 import OptimisticallyStrengthen from './components/OptimisticallyStrengthen'
 import {API_VERSION, DEFAULT_CONFIG, METADATA_SCHEMA_NAME} from './constants'
+import {documentInternationalizationUsEnglishLocaleBundle} from './i18n'
 import metadata from './schema/translation/metadata'
-import {PluginConfig, TranslationReference} from './types'
+import type {PluginConfig, TranslationReference} from './types'
 
 export const documentInternationalization = definePlugin<PluginConfig>(
   (config) => {
@@ -39,6 +40,10 @@ export const documentInternationalization = definePlugin<PluginConfig>(
         },
       },
 
+      i18n: {
+        bundles: [documentInternationalizationUsEnglishLocaleBundle],
+      },
+
       // Adds:
       // - A bulk-publishing UI component to the form
       // - Will only work for projects on a compatible plan
@@ -54,7 +59,7 @@ export const documentInternationalization = definePlugin<PluginConfig>(
               const translations =
                 (props?.value?.translations as TranslationReference[]) ?? []
               const weakAndTypedTranslations = translations.filter(
-                ({value}) => value && value._weak && value._strengthenOnPublish
+                ({value}) => value?._weak && value._strengthenOnPublish
               )
 
               return (
@@ -171,6 +176,7 @@ export const documentInternationalization = definePlugin<PluginConfig>(
                 weak: pluginConfig.weakReferences,
                 // Reference filters don't actually enforce validation!
                 validation: (Rule) =>
+                  // @ts-expect-error - fix typings
                   Rule.custom(async (item: TranslationReference, context) => {
                     if (!item?.value?._ref || !item?._key) {
                       return true
@@ -192,8 +198,7 @@ export const documentInternationalization = definePlugin<PluginConfig>(
                     return `Referenced document does not have the correct language value`
                   }),
                 options: {
-                  // TODO: Update type once it knows the values of this filter
-                  // @ts-expect-error
+                  // @ts-expect-error - Update type once it knows the values of this filter
                   filter: ({parent, document}) => {
                     if (!parent) return null
 

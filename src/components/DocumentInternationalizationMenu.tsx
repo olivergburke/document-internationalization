@@ -10,11 +10,11 @@ import {
   useClickOutside,
 } from '@sanity/ui'
 import {uuid} from '@sanity/uuid'
-import {FormEvent, useCallback, useMemo, useState} from 'react'
+import {type FormEvent, useCallback, useMemo, useState} from 'react'
 import {useEditState} from 'sanity'
 
 import {useTranslationMetadata} from '../hooks/useLanguageMetadata'
-import {DocumentInternationalizationMenuProps} from '../types'
+import type {DocumentInternationalizationMenuProps} from '../types'
 import {useDocumentInternationalizationContext} from './DocumentInternationalizationContext'
 import LanguageManage from './LanguageManage'
 import LanguageOption from './LanguageOption'
@@ -25,7 +25,7 @@ export function DocumentInternationalizationMenu(
   props: DocumentInternationalizationMenuProps
 ) {
   const {documentId} = props
-  const schemaType = props.schemaType.name
+  const schemaType = props.schemaType
   const {languageField, supportedLanguages} =
     useDocumentInternationalizationContext()
 
@@ -64,7 +64,7 @@ export function DocumentInternationalizationMenu(
   }, [loading, metadata?._id])
 
   // Duplicate a new language version from the most recent version of this document
-  const {draft, published} = useEditState(documentId, schemaType)
+  const {draft, published} = useEditState(documentId, schemaType.name)
   const source = draft || published
 
   // Check for data issues
@@ -95,7 +95,13 @@ export function DocumentInternationalizationMenu(
         </Card>
       ) : (
         <Stack space={1}>
-          <LanguageManage id={metadata?._id} />
+          <LanguageManage
+            id={metadata?._id}
+            documentId={documentId}
+            metadataId={metadataId}
+            schemaType={schemaType}
+            sourceLanguageId={sourceLanguageId}
+          />
           {supportedLanguages.length > 4 ? (
             <TextInput
               onChange={handleQuery}
@@ -197,12 +203,13 @@ export function DocumentInternationalizationMenu(
     return null
   }
 
-  if (!schemaType) {
+  if (!schemaType || !schemaType.name) {
     return null
   }
 
   return (
     <Popover
+      animate
       constrainSize
       content={content}
       open={open}

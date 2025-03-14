@@ -9,8 +9,7 @@
   ],
   "compilerOptions": {
     "rootDir": ".",
-    "outDir": "./lib",
-    "jsx": "react-jsx",
+    "outDir": "./dist",
     "emitDeclarationOnly": true
   }
 }

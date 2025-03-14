@@ -5,6 +5,86 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1](https://github.com/sanity-io/document-internationalization/compare/v3.3.0...v3.3.1) (2025-01-07)
+
+### Bug Fixes
+
+- re-add mutator to dependencies ([#202](https://github.com/sanity-io/document-internationalization/issues/202)) ([9a26ec9](https://github.com/sanity-io/document-internationalization/commit/9a26ec91fe48c3513c180e8fd3fb747f96014074))
+
+## [3.3.0](https://github.com/sanity-io/document-internationalization/compare/v3.2.1...v3.3.0) (2024-12-20)
+
+### Features
+
+- adds callback function ([#198](https://github.com/sanity-io/document-internationalization/issues/198)) ([67bd80a](https://github.com/sanity-io/document-internationalization/commit/67bd80a477552a16f0ee3c382e997fe8d237dd1c))
+
+## [3.2.1](https://github.com/sanity-io/document-internationalization/compare/v3.2.0...v3.2.1) (2024-12-18)
+
+### Bug Fixes
+
+- support react 19 ([#197](https://github.com/sanity-io/document-internationalization/issues/197)) ([913558a](https://github.com/sanity-io/document-internationalization/commit/913558a30522d7ed2220359013d7ce1f17d62db3)), closes [#196](https://github.com/sanity-io/document-internationalization/issues/196)
+
+## [3.2.0](https://github.com/sanity-io/document-internationalization/compare/v3.1.0...v3.2.0) (2024-11-19)
+
+### Features
+
+- add duplicate document action ([#194](https://github.com/sanity-io/document-internationalization/issues/194)) ([087415d](https://github.com/sanity-io/document-internationalization/commit/087415dd7258c7ded77ef8e0135069fe6e584868))
+
+## [3.1.0](https://github.com/sanity-io/document-internationalization/compare/v3.0.1...v3.1.0) (2024-09-27)
+
+### Features
+
+- manage without translations ([578a9a0](https://github.com/sanity-io/document-internationalization/commit/578a9a023129f4be91250b0dcd443afe3492dd0a))
+- manage without translations ([#192](https://github.com/sanity-io/document-internationalization/issues/192)) ([bf301c5](https://github.com/sanity-io/document-internationalization/commit/bf301c5a2d1a97a0b7ca23728744b27583151ed4))
+
+## [3.0.1](https://github.com/sanity-io/document-internationalization/compare/v3.0.0...v3.0.1) (2024-08-23)
+
+### Bug Fixes
+
+- disable LanguageOption button double-clicks ([#190](https://github.com/sanity-io/document-internationalization/issues/190)) ([3fdaff6](https://github.com/sanity-io/document-internationalization/commit/3fdaff64af1df2879e7bf85f00ef895462359549))
+
+## [3.0.0](https://github.com/sanity-io/document-internationalization/compare/v2.1.2...v3.0.0) (2024-04-09)
+
+### ⚠ BREAKING CHANGES
+
+- add strict ESM support
+
+### Features
+
+- add strict ESM support ([f8ed232](https://github.com/sanity-io/document-internationalization/commit/f8ed23271e401ddf6079ff6090ff1e34165c5ff8))
+
+## [2.1.2](https://github.com/sanity-io/document-internationalization/compare/v2.1.1...v2.1.2) (2024-04-09)
+
+### Bug Fixes
+
+- add provenance ([e31635f](https://github.com/sanity-io/document-internationalization/commit/e31635fa09f9a7dda3141f6debb225fa4ba6b226))
+
+## [2.1.1](https://github.com/sanity-io/document-internationalization/compare/v2.1.0...v2.1.1) (2024-04-04)
+
+### Bug Fixes
+
+- reinit languages on workspace switch ([d1102cb](https://github.com/sanity-io/document-internationalization/commit/d1102cb1f04565fadfac98816d24bb2d571b3f4b))
+
+## [2.1.0](https://github.com/sanity-io/document-internationalization/compare/v2.0.3...v2.1.0) (2024-02-26)
+
+### Features
+
+- exclude fields from duplication ([1cd96dc](https://github.com/sanity-io/document-internationalization/commit/1cd96dcc03754cf2dc03cee9239a3524b0751c88))
+
+## [2.0.3](https://github.com/sanity-io/document-internationalization/compare/v2.0.2...v2.0.3) (2024-01-19)
+
+### Bug Fixes
+
+- update dependencies ([566fd7d](https://github.com/sanity-io/document-internationalization/commit/566fd7db86c70029b3491d0681e5946f4d262ac7))
+
+## [2.0.2](https://github.com/sanity-io/document-internationalization/compare/v2.0.1...v2.0.2) (2023-11-02)
+
+### Bug Fixes
+
+- **deps:** semver version ([87eb4cc](https://github.com/sanity-io/document-internationalization/commit/87eb4cc9b0180e48fd194e5cb34be1fbe9f1d8a9))
+- Fixes [#139](https://github.com/sanity-io/document-internationalization/issues/139) - desk tool crash ([82d23c9](https://github.com/sanity-io/document-internationalization/commit/82d23c9982133827f776f6bed6ad03569b218328))
+- force new release ([f144bef](https://github.com/sanity-io/document-internationalization/commit/f144bef912f12e1e4df18496b8b3d6abb3b55b52))
+- update pkg-utils and exports ([1d50d20](https://github.com/sanity-io/document-internationalization/commit/1d50d208f1175a68381d54655a68ad7b0ac2d718))
+
 ## [2.0.1](https://github.com/sanity-io/document-internationalization/compare/v2.0.0...v2.0.1) (2023-06-12)
 
 ### Bug Fixes
